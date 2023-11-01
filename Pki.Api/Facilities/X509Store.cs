@@ -23,7 +23,9 @@ namespace Org.BouncyCastle.X509
 
 		public IEnumerable<X509Certificate> EnumerateMatches(ISelector<X509Certificate> selector)
 		{
-			Guard.IsNotNull(selector, nameof(selector));
+			if (selector == null) //< Return all.
+				return _certificates;
+
 			return _certificates.Where(x => selector.Match(x)).ToArray();
 		}
 	}

@@ -42,6 +42,8 @@ namespace Pki.Api.Features
 		private X509Certificate _cert;
 		private X509Store _store;
 
+		private string _policyOid => _settings?.TsaPolicyOid;
+
 		#endregion
 
 		#region .ctors
@@ -116,7 +118,7 @@ namespace Pki.Api.Features
 				"Missing bytes to sign?!"
 			);
 
-			_logger.LogDebug("Processing timestamp request w/ bytes length {0} and algo {1}", bytes.Length, req.MessageImprintAlgOid);
+			_logger.LogDebug("Processing timestamp request w/ bytes length {0} and algOid {1}", bytes.Length, req.MessageImprintAlgOid);
 
 			var signedAttrs = new Asn1EncodableVector();
 			if (req.CertReq)
@@ -126,7 +128,7 @@ namespace Pki.Api.Features
 
 			// TODO: May add more signed attributes at this point.
 
-			var gen = new TimeStampTokenGenerator(_key, _cert, req.MessageImprintAlgOid, req.ReqPolicy, new AttributeTable(signedAttrs), null);
+			var gen = new TimeStampTokenGenerator(_key, _cert, req.MessageImprintAlgOid, _policyOid, new AttributeTable(signedAttrs), null);
 			if (req.CertReq)
 			{
 				gen.SetCertificates(_store);
@@ -135,7 +137,7 @@ namespace Pki.Api.Features
 			var respGen = new TimeStampResponseGenerator(gen, _acceptedAlgOids);
 			var resp = respGen.Generate(req, GetSerialNumberFor(bytes), DateTime.UtcNow);
 
-			_logger.LogDebug("Processed timestamp request w/ bytes length {0} and algo {1} (Status: {2})", bytes.Length, req.MessageImprintAlgOid, resp.Status);
+			_logger.LogDebug("Processed timestamp request w/ bytes length {0} and algOid {1} (Status: {2})", bytes.Length, req.MessageImprintAlgOid, resp.Status);
 
 			return resp.GetEncoded();
 		}

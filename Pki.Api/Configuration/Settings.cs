@@ -4,6 +4,9 @@ namespace Pki.Api
 {
 	public class TimestampSettings
 	{
+		[Required]
+		public string TsaPolicyOid { get; init; }
+
 		/// <summary>
 		/// Path of the complete certificate chain and the private key as encrypted PKCS#12 file.
 		/// </summary>

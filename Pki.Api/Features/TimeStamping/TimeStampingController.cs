@@ -10,6 +10,9 @@ namespace Pki.Api.Features
 	{
 		#region Fields
 
+		private const string CONTENT_TYPE_TIMESTAMP_QUERY = "application/timestamp-query";
+		private const string CONTENT_TYPE_TIMESTAMP_REPLY = "application/timestamp-reply";
+
 		private readonly ILogger<TimeStampingController> _logger;
 		private readonly ITimeStamper _timeStamper;
 
@@ -48,8 +51,7 @@ namespace Pki.Api.Features
 		#endregion
 
 		[HttpPost]
-		[Consumes("application/timestamp-query")]
-		[Produces("application/timestamp-reply")]
+		[Consumes(CONTENT_TYPE_TIMESTAMP_QUERY)]
 		public async Task<IActionResult> Post()
 		{
 			_logger.LogDebug("Processing request to generate a timestamp");
@@ -60,7 +62,7 @@ namespace Pki.Api.Features
 
 			_logger.LogDebug("Processed request to generate a timestamp");
 
-			return Ok(encoded);
+			return File(encoded, CONTENT_TYPE_TIMESTAMP_REPLY);
 		}
 	}
 }

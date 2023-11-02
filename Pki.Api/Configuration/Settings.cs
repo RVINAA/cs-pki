@@ -17,6 +17,11 @@ namespace Pki.Api
 		/// PKCS#12's password if specified on file creation.
 		/// </summary>
 		public string Pkcs12Pass { get; init; }
+
+		/// <summary>
+		/// Determine if patch related to signing certificate validation should be ignored.. see patcher summary.
+		/// </summary>
+		public bool ApplyTspUtilValidateCertificatePatch { get; init; }
 	}
 
 	public class Settings

@@ -7,6 +7,7 @@ namespace Pki.Api
 	public class Program
 	{
 		private static bool _isDevelopment;
+		private static Settings _settings;
 
 		public static void Main(string[] args)
 		{
@@ -26,8 +27,14 @@ namespace Pki.Api
 				.AddEnvironmentVariables()
 				.Build();
 
+			_settings = cfg.GetSection("Settings").Get<Settings>();
+
+			// Apply patches if demanded..
+			if (_settings.Timestamp.ApplyTspUtilValidateCertificatePatch)
+				TspUtilValidateCertificatePatcher.Apply();
+
 			builder.Services.AddSingleton(cfg)
-				.AddSingleton(_ => cfg.GetSection("Settings").Get<Settings>())
+				.AddSingleton(_ => _settings)
 				.AddSingleton<ITimeStamper, TimeStamper>();
 
 			builder.Logging
